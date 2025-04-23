@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import '@testing-library/jest-dom';
+import userEvent from "@testing-library/user-event";
 
 import App from "../App";
 
@@ -66,26 +67,86 @@ test("displays the correct links", () => {
 
 // Newsletter Form - Initial State
 test("the form includes text inputs for name and email address", () => {
-  // your test code here
+  render(<App />)
+
+  const user = screen.getByLabelText(/enter your user name/i);
+  const email = screen.getByLabelText(/enter your email address/i);
+
+  userEvent.type(user, "John Smith");
+  userEvent.type(email, "johnsmith@yahoo.com");
+
+  expect(user).toHaveValue("John Smith");
+  expect(email).toHaveValue("johnsmith@yahoo.com");
 });
 
 test("the form includes three checkboxes to select areas of interest", () => {
-  // your test code here
+  render(<App />)
+
+  const checkboxes = screen.getAllByRole("checkbox");
+
+  expect(checkboxes.length).toBeGreaterThanOrEqual(3);
 });
 
 test("the checkboxes are initially unchecked", () => {
-  // your test code here
+  render(<App />)
+
+  const checkboxes = screen.getAllByRole("checkbox");
+
+  checkboxes.forEach((checkbox) => {
+    expect(checkbox).not.toBeChecked();
+  })
 });
 
 // Newsletter Form - Adding Responses
 test("the page shows information the user types into the name and email address form fields", () => {
-  // your test code here
+  render(<App />)
+
+  const user = screen.getByLabelText(/enter your user name/i);
+  const email = screen.getByLabelText(/enter your email address/i);
+
+  userEvent.type(user, "John Smith");
+  userEvent.type(email, "johnsmith@yahoo.com");
+
+  expect(user).toHaveValue("John Smith");
+  expect(email).toHaveValue("johnsmith@yahoo.com");
 });
 
 test("checked status of checkboxes changes when user clicks them", () => {
-  // your test code here
+  render(<App />)
+
+  const interest1 = screen.getByLabelText(/interest 1/i);
+  const interest2 = screen.getByLabelText(/interest 2/i);
+  const interest3 = screen.getByLabelText(/interest 3/i);
+
+  expect(interest1.checked).toBe(false);
+  expect(interest2.checked).toBe(false);
+  expect(interest3.checked).toBe(false);
+
+  userEvent.click(interest1);
+  userEvent.click(interest2);
+
+  expect(interest1.checked).toBe(true);
+  expect(interest2.checked).toBe(true);
+  expect(interest3.checked).toBe(false);
+
+  userEvent.click(interest1);
+
+  expect(interest1.checked).toBe(false);
+  expect(interest2.checked).toBe(true);
+  expect(interest3.checked).toBe(false);
 });
 
 test("a message is displayed when the user clicks the Submit button", () => {
-  // your test code here
+  render(<App />)
+
+  const user = screen.getByLabelText(/enter your user name/i);
+  const email = screen.getByLabelText(/enter your email address/i);
+  const submitButton = screen.getByText(/submit/i);
+
+  userEvent.type(user, "John Smith");
+  userEvent.type(email, "johnsmith@yahoo.com");
+  userEvent.click(submitButton);
+
+  const message = screen.getByText(/thank you, john smith! your form has been submitted. we will contact you at johnsmith@yahoo.com./i);
+  expect(message).toBeInTheDocument();
 });
